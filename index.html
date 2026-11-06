@@ -108,19 +108,17 @@ body{
   </div>
   <p class="note">Giọng đọc tạo bằng Piper với giọng vi_VN-vais1000 (dữ liệu VAIS-1000, CC BY 4.0).</p>
   <p class="note">Không nghe tiếng? Tăng âm lượng, trên iPhone gạt tắt nút Im lặng ở cạnh máy, rồi bấm lại vào trò chơi.</p>
-  <p class="note">Bố mẹ đọc to tên và tiếng kêu cùng bé là vui nhất. Để thoát game: giữ nút ở góc trên bên trái khoảng 2 giây.</p>
+  <p class="note">Bố mẹ đọc to tên và tiếng kêu cùng bé là vui nhất. Bấm nút ⌂ ở góc trên bên trái để về màn hình chính.</p>
 </section>
 
 <section id="animals" class="screen" hidden>
-  <button class="exit" aria-label="Giữ 2 giây để thoát"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24"/></svg>⌂</button>
-  <span class="hint">Giữ để thoát</span>
+  <button class="exit" aria-label="Về màn hình chính">⌂</button>
   <div class="grid" id="grid"></div>
 </section>
 
 <section id="pop" class="screen" hidden>
   <canvas id="cv"></canvas>
-  <button class="exit" aria-label="Giữ 2 giây để thoát"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24"/></svg>⌂</button>
-  <span class="hint">Giữ để thoát</span>
+  <button class="exit" aria-label="Về màn hình chính">⌂</button>
 </section>
 
 <script>
@@ -307,8 +305,11 @@ body{
     }
     if(blooms.length>40) blooms.shift();
   }
+  let looping = false;
   function frame(){
-    if(!running) return;
+    if(!running){ looping = false; return; }
+    requestAnimationFrame(frame);
+    try{
     ctx.setTransform(dpr,0,0,dpr,0,0);
     ctx.clearRect(0,0,innerWidth,innerHeight);
     blooms.forEach(b=>{
@@ -324,10 +325,10 @@ body{
       else { ctx.beginPath(); ctx.arc(b.x,y,r*.8,0,7); ctx.fill(); ctx.fillStyle="rgba(255,255,255,.45)"; ctx.beginPath(); ctx.arc(b.x-r*.28,y-r*.28,r*.2,0,7); ctx.fill(); }
     });
     blooms = blooms.filter(b=>b.t<3.2);
-    parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=.12; p.life-=.016; ctx.globalAlpha=Math.max(0,p.life); ctx.fillStyle=p.c; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*p.life,0,7); ctx.fill(); });
+    parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=.12; p.life-=.016; if(p.life<=0) return; ctx.globalAlpha=p.life; ctx.fillStyle=p.c; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*p.life,0,7); ctx.fill(); });
     parts = parts.filter(p=>p.life>0);
+    }catch(e){ parts = []; blooms = []; }
     ctx.globalAlpha = 1;
-    requestAnimationFrame(frame);
   }
   cv.addEventListener("pointerdown", e => { e.preventDefault(); audio(); burst(e.clientX, e.clientY); });
   cv.addEventListener("pointermove", e => { if(e.buttons && Math.random()<.15) burst(e.clientX, e.clientY, true); });
@@ -339,7 +340,7 @@ body{
     Object.entries(screens).forEach(([k,el])=> el.hidden = k!==name);
     running = name==="pop";
     try{ if(name==="home") keepAlive.pause(); else keepAlive.play().catch(()=>{}); }catch(e){}
-    if(running){ resize(); requestAnimationFrame(frame); }
+    if(running){ resize(); if(!looping){ looping = true; requestAnimationFrame(frame); } }
     if(name==="home"){
       try{ if(document.fullscreenElement) document.exitFullscreen().catch(()=>{}); }catch(e){}
       try{ wake && wake.release(); wake=null; }catch(e){}
@@ -352,14 +353,10 @@ body{
   document.getElementById("go-animals").addEventListener("click", ()=>{ audio(); nextSet(); renderGrid(); show("animals"); startJingle(); });
   document.getElementById("go-pop").addEventListener("click", ()=>{ audio(); parts=[]; blooms=[]; show("pop"); startJingle(); });
 
-  // Hold-to-exit for parents
+  // Back to the home screen
   document.querySelectorAll(".exit").forEach(btn=>{
-    const hint = btn.parentElement.querySelector(".hint");
-    let timer = null;
-    const start = e => { e.preventDefault(); e.stopPropagation(); btn.classList.add("holding"); hint.classList.add("show"); timer = setTimeout(()=>{ cancel(); show("home"); }, 2000); };
-    const cancel = () => { clearTimeout(timer); btn.classList.remove("holding"); setTimeout(()=>hint.classList.remove("show"), 800); };
-    btn.addEventListener("pointerdown", start);
-    ["pointerup","pointerleave","pointercancel"].forEach(t=>btn.addEventListener(t, cancel));
+    btn.addEventListener("pointerdown", e => { e.stopPropagation(); });
+    btn.addEventListener("click", e => { e.preventDefault(); e.stopPropagation(); show("home"); });
   });
 
   // Block stray gestures inside the games (zoom, long-press menu, scroll)
