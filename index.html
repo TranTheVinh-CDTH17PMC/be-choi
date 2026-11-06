@@ -51,6 +51,7 @@ body{
 .seg button{border:0;background:transparent;font:inherit;font-weight:700;color:var(--muted);padding:6px 16px;border-radius:999px;cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--card);color:var(--ink);box-shadow:0 2px 0 rgba(47,58,74,.12)}
 .note{font-size:14px!important;max-width:46ch!important}
+.ver{opacity:.6;font-size:12px!important}
 
 /* Parent exit button (hold to leave) */
 .exit{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));left:calc(10px + env(safe-area-inset-left,0px));
@@ -109,6 +110,7 @@ body{
   <p class="note">Giọng đọc tạo bằng Piper với giọng vi_VN-vais1000 (dữ liệu VAIS-1000, CC BY 4.0).</p>
   <p class="note">Không nghe tiếng? Tăng âm lượng, trên iPhone gạt tắt nút Im lặng ở cạnh máy, rồi bấm lại vào trò chơi.</p>
   <p class="note">Bố mẹ đọc to tên và tiếng kêu cùng bé là vui nhất. Bấm nút ⌂ ở góc trên bên trái để về màn hình chính.</p>
+  <p class="note ver">Bản 8 · nút ⌂ bấm là về</p>
 </section>
 
 <section id="animals" class="screen" hidden>
@@ -355,6 +357,7 @@ body{
 
   // Back to the home screen
   document.querySelectorAll(".exit").forEach(btn=>{
+    // One tap goes home. Uses "click" so the same tap cannot fall through onto a game button.
     btn.addEventListener("pointerdown", e => { e.stopPropagation(); });
     btn.addEventListener("click", e => { e.preventDefault(); e.stopPropagation(); show("home"); });
   });
