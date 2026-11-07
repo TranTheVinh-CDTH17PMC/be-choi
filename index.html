@@ -1,3 +1,18 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#dff1f7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Bé Chơi Chạm">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>:root{color-scheme:light}body{margin:0;font:14px system-ui,-apple-system,"Segoe UI",sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
 <title>Bé Chơi Chạm</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,6 +27,14 @@
   --leaf:#7ccf8a;
   --card:#fffdf8;
   --muted:#5d6b7c;
+  --mint:#9fe0cf;
+  --wall:#e3f4ec;
+  --floor:#f6e3c5;
+  --rug:#ffd7df;
+  --yolk-deep:#ffc93a;
+  --beak:#ffa23f;
+  --beak-deep:#f2832f;
+  --blush:#ff8fa3;
   --font-display:"Baloo 2","Nunito","Trebuchet MS",system-ui,sans-serif;
   --emoji:min(22vw,22vh);
   color-scheme:light;
@@ -29,21 +52,33 @@ body{
 .screen[hidden]{display:none!important}
 
 /* Home */
-#home{align-items:center;justify-content:center;gap:20px;overflow-y:auto;touch-action:pan-y;
+#home{align-items:center;justify-content:flex-start;gap:18px;overflow-y:auto;touch-action:pan-y;
   padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px));
   background:radial-gradient(circle at 80% 12%, #fff6d6 0 12%, transparent 13%), var(--sky)}
+#home > :first-child{margin-top:auto}
+#home > :last-child{margin-bottom:auto}
 #home h1{margin:0;font-size:clamp(34px,8vw,56px);line-height:1;font-weight:800;text-wrap:balance;text-align:center}
 #home p{margin:0;color:var(--muted);font-size:17px;text-align:center;max-width:34ch}
-.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:20px;width:min(720px,100%)}
+.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;width:min(960px,100%)}
 .choice{border:0;border-radius:36px;padding:24px 20px;font:inherit;color:var(--ink);cursor:pointer;
-  display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 8px 0 rgba(47,58,74,.18);transition:transform .12s}
+  display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;box-shadow:0 8px 0 rgba(47,58,74,.18);transition:transform .12s}
 .choice:active{transform:translateY(6px);box-shadow:0 2px 0 rgba(47,58,74,.18)}
 .choice:focus-visible,.seg button:focus-visible{outline:4px solid var(--ink);outline-offset:3px}
 .choice .pic{font-size:clamp(60px,15vw,92px);line-height:1}
 .choice .name{font-size:28px;font-weight:800}
 .choice .sub{font-size:16px;color:var(--muted);font-weight:500}
+.choice .txt{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
 .c-animal{background:var(--sun)}
 .c-pop{background:var(--berry)}
+.c-talk{background:var(--mint)}
+@media (max-width:759px){
+  .choices{grid-template-columns:1fr;gap:14px;width:min(520px,100%)}
+  .choice{flex-direction:row;gap:16px;padding:14px 20px;border-radius:28px;text-align:left}
+  .choice .pic{font-size:54px;flex:none}
+  .choice .txt{align-items:flex-start;gap:2px}
+  .choice .name{font-size:23px;line-height:1.15}
+  .choice .sub{font-size:15px;line-height:1.3}
+}
 
 .settings{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 24px;width:min(720px,100%)}
 .set{display:flex;align-items:center;gap:10px;font-size:16px;color:var(--muted)}
@@ -53,16 +88,10 @@ body{
 .note{font-size:14px!important;max-width:46ch!important}
 .ver{opacity:.6;font-size:12px!important}
 
-/* Parent exit button (hold to leave) */
+/* Back to home */
 .exit{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));left:calc(10px + env(safe-area-inset-left,0px));
   width:52px;height:52px;border-radius:50%;border:0;background:rgba(255,255,255,.55);color:var(--muted);
   font-size:22px;z-index:5;display:grid;place-items:center;cursor:pointer}
-.exit svg{position:absolute;inset:0;transform:rotate(-90deg)}
-.exit circle{fill:none;stroke:var(--ink);stroke-width:4;stroke-dasharray:151;stroke-dashoffset:151}
-.exit.holding circle{transition:stroke-dashoffset 2s linear;stroke-dashoffset:0}
-.hint{position:absolute;top:calc(22px + env(safe-area-inset-top,0px));left:calc(72px + env(safe-area-inset-left,0px));
-  font-size:14px;color:var(--muted);opacity:0;transition:opacity .3s;pointer-events:none;z-index:5}
-.hint.show{opacity:1}
 
 /* Animals */
 #animals{background:linear-gradient(var(--sky) 62%, var(--leaf) 62%)}
@@ -86,18 +115,103 @@ body{
 #pop{background:#1f2a44}
 #pop canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 #pop .exit{background:rgba(255,255,255,.12);color:#c9d3e6}
-#pop .exit circle{stroke:#fff}
-#pop .hint{color:#c9d3e6}
 
-@media (prefers-reduced-motion:reduce){.animal.on .e{animation:none}.choice{transition:none}}
+/* Talk: Bông the chick */
+#talk{background:linear-gradient(var(--wall) 0 62%, var(--floor) 62% 100%)}
+#talk .exit{background:rgba(255,255,255,.7)}
+.stage{flex:1;min-height:0;position:relative;padding-top:calc(64px + env(safe-area-inset-top,0px))}
+#pet{display:block;width:100%;height:100%;overflow:visible;touch-action:none}
+.mic{position:absolute;z-index:5;top:calc(14px + env(safe-area-inset-top,0px));right:calc(12px + env(safe-area-inset-right,0px));
+  max-width:calc(100% - 96px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));
+  display:flex;align-items:center;gap:8px;border:0;border-radius:999px;background:rgba(255,255,255,.82);color:var(--ink);
+  font:inherit;font-size:15px;font-weight:700;line-height:1.2;text-align:left;padding:8px 14px 8px 10px;cursor:pointer}
+.mic .dot{flex:none;width:14px;height:14px;border-radius:50%;background:#b9c3cd;transition:transform .08s}
+.mic[data-s="on"] .dot,.mic[data-s="talk"] .dot{background:var(--leaf)}
+.mic[data-s="hear"] .dot{background:var(--berry)}
+.mic:focus-visible,.act:focus-visible{outline:4px solid var(--ink);outline-offset:3px}
+.acts{display:flex;justify-content:center;gap:clamp(24px,9vw,56px);
+  padding:8px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.act{width:84px;height:84px;border-radius:50%;border:0;background:var(--card);font-size:42px;line-height:1;cursor:pointer;
+  display:grid;place-items:center;box-shadow:0 6px 0 rgba(47,58,74,.16);transition:transform .1s}
+.act:active{transform:translateY(5px);box-shadow:0 1px 0 rgba(47,58,74,.16)}
+@media (orientation:landscape) and (max-height:520px){
+  .stage{padding-top:calc(16px + env(safe-area-inset-top,0px))}
+  .acts{position:absolute;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));flex-direction:column;gap:14px;padding:0}
+  .act{width:72px;height:72px;font-size:36px}
+}
+
+/* Bông drawing */
+.rug{fill:var(--rug)}
+#shadow{fill:rgba(90,60,30,.16)}
+.foot{fill:var(--beak)}
+.wing ellipse,.tuft path{fill:var(--yolk-deep)}
+.belly{fill:#fff3c4}
+.cheek{fill:var(--blush);opacity:.5;transition:opacity .3s}
+.eye ellipse{fill:#3b2f2a}
+.shine{fill:#fff}
+.heye{fill:none;stroke:#3b2f2a;stroke-width:7;stroke-linecap:round;opacity:0;transition:opacity .12s}
+#mouth{fill:#b8404c}
+#beakLo{fill:var(--beak-deep)}
+.beakUp{fill:var(--beak)}
+.beakShine{fill:#ffcf94}
+.bub{fill:#fff}
+#bubble circle{fill:#97a4b2}
+#bottleWrap,#bubble,#fx{pointer-events:none}
+#chick,#breath,.tuft,.wing,.eye,#shadow,#bottleWrap,#bubble circle,.fly{transform-box:fill-box}
+#chick,#breath,.tuft{transform-origin:50% 100%}
+.eye,#shadow,.fly,#bubble circle{transform-origin:50% 50%}
+.wl{transform-origin:85% 20%}
+.wr{transform-origin:15% 20%}
+#chick{transition:transform .3s}
+#breath{animation:breathe 3.2s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.02,.98)}}
+.eye{transition:transform .07s, opacity .12s}
+.tuft{transition:transform .25s}
+#pet.blink .eye{transform:scaleY(.12)}
+#pet.joy .eye{opacity:0}
+#pet.joy .heye{opacity:1}
+#pet.joy .cheek{opacity:.95}
+#pet.listen #chick{transform:rotate(-7deg)}
+#pet.listen .eye{transform:translateY(-5px)}
+#pet.listen .tuft{transform:scale(1.2)}
+#bubble{opacity:0;transition:opacity .2s}
+#pet.listen #bubble{opacity:1}
+#pet.listen #bubble circle{animation:dots 1s ease-in-out infinite}
+#bubble circle:nth-of-type(2){animation-delay:.15s}
+#bubble circle:nth-of-type(3){animation-delay:.3s}
+@keyframes dots{30%{transform:translateY(-6px)}60%{transform:none}}
+#pet.talking #breath{animation:talkbob .22s ease-in-out infinite alternate}
+@keyframes talkbob{to{transform:scale(1.025,.975)}}
+#pet.wiggle #chick{animation:wiggle .55s ease-in-out}
+@keyframes wiggle{20%{transform:rotate(-7deg)}40%{transform:rotate(6deg)}60%{transform:rotate(-4deg)}80%{transform:rotate(2deg)}}
+#pet.hop #chick{animation:chickhop .6s ease-out}
+@keyframes chickhop{15%{transform:scale(1.08,.9)}45%{transform:translateY(-70px) scale(.95,1.06)}75%{transform:scale(1.06,.93)}100%{transform:none}}
+#pet.hop #shadow{animation:shadow .6s ease-out}
+@keyframes shadow{45%{transform:scale(.65);opacity:.5}}
+#pet.dance #chick{animation:dance .48s ease-in-out infinite alternate}
+@keyframes dance{0%{transform:translateX(-14px) rotate(-8deg)}50%{transform:translateY(-24px)}100%{transform:translateX(14px) rotate(8deg)}}
+#pet.flap .wl{animation:flapl .22s ease-in-out infinite alternate}
+#pet.flap .wr{animation:flapr .22s ease-in-out infinite alternate}
+@keyframes flapl{to{transform:rotate(30deg)}}
+@keyframes flapr{to{transform:rotate(-30deg)}}
+#bottleWrap{opacity:0;transform:translate(160px,-30px);transition:transform .45s cubic-bezier(.3,1.3,.5,1), opacity .3s}
+#pet.feed #bottleWrap{opacity:1;transform:none}
+#pet.suck #bottleWrap{animation:suck .55s ease-in-out infinite}
+@keyframes suck{50%{transform:translate(-8px,4px)}}
+
+@media (prefers-reduced-motion:reduce){
+  .animal.on .e{animation:none}.choice{transition:none}
+  #breath,#pet.talking #breath,#pet.dance #chick,#pet.flap .wl,#pet.flap .wr,#pet.listen #bubble circle,#pet.suck #bottleWrap{animation:none}
+}
 </style>
 
 <section id="home" class="screen">
   <h1>Bé chơi chạm</h1>
   <p>Chọn một trò, rồi đưa máy cho bé.</p>
   <div class="choices">
-    <button class="choice c-animal" id="go-animals"><span class="pic">🐮</span><span class="name">Con vật kêu gì?</span><span class="sub">37 con vật, chạm vào để nghe đọc tên</span></button>
-    <button class="choice c-pop" id="go-pop"><span class="pic">✨</span><span class="name">Chạm đâu nở đó</span><span class="sub">Chạm chỗ nào cũng nở hoa, sao, bong bóng</span></button>
+    <button class="choice c-animal" id="go-animals"><span class="pic">🐮</span><span class="txt"><span class="name">Con vật kêu gì?</span><span class="sub">37 con vật, chạm vào để nghe đọc tên</span></span></button>
+    <button class="choice c-pop" id="go-pop"><span class="pic">✨</span><span class="txt"><span class="name">Chạm đâu nở đó</span><span class="sub">Chạm chỗ nào cũng nở hoa, sao, bong bóng</span></span></button>
+    <button class="choice c-talk" id="go-talk"><span class="pic">🐥</span><span class="txt"><span class="name">Bông nhại giọng</span><span class="sub">Nói gì Bông nhại nấy, chạm để Bông cười</span></span></button>
   </div>
   <div class="settings">
     <div class="set">Mỗi màn
@@ -107,10 +221,11 @@ body{
       <div class="seg" id="seg-voice"><button data-v="off">Tắt</button><button data-v="on">Bật</button></div>
     </div>
   </div>
-  <p class="note">Giọng đọc tạo bằng Piper với giọng vi_VN-vais1000 (dữ liệu VAIS-1000, CC BY 4.0).</p>
+  <p class="note">Bông nhại giọng cần micro. Tiếng nói chỉ phát lại ngay trên máy, không lưu và không gửi đi đâu.</p>
   <p class="note">Không nghe tiếng? Tăng âm lượng, trên iPhone gạt tắt nút Im lặng ở cạnh máy, rồi bấm lại vào trò chơi.</p>
   <p class="note">Bố mẹ đọc to tên và tiếng kêu cùng bé là vui nhất. Bấm nút ⌂ ở góc trên bên trái để về màn hình chính.</p>
-  <p class="note ver">Bản 8 · nút ⌂ bấm là về</p>
+  <p class="note">Giọng đọc tên con vật tạo bằng Piper với giọng vi_VN-vais1000 (dữ liệu VAIS-1000, CC BY 4.0).</p>
+  <p class="note ver">Bản 9 · thêm Bông nhại giọng</p>
 </section>
 
 <section id="animals" class="screen" hidden>
@@ -121,6 +236,63 @@ body{
 <section id="pop" class="screen" hidden>
   <canvas id="cv"></canvas>
   <button class="exit" aria-label="Về màn hình chính">⌂</button>
+</section>
+
+<section id="talk" class="screen" hidden>
+  <button class="exit" aria-label="Về màn hình chính">⌂</button>
+  <button class="mic" id="mic" data-s="wait"><span class="dot" id="micdot"></span><span id="mictext">Đang mở micro…</span></button>
+  <div class="stage">
+    <svg id="pet" viewBox="0 0 400 420" preserveAspectRatio="xMidYMax meet" role="img" aria-label="Bạn gà con Bông">
+      <defs>
+        <radialGradient id="gBody" cx="42%" cy="30%" r="78%">
+          <stop offset="0" stop-color="#ffec99"/>
+          <stop offset=".6" stop-color="#ffd54a"/>
+          <stop offset="1" stop-color="#f5b92a"/>
+        </radialGradient>
+      </defs>
+      <ellipse class="rug" cx="200" cy="404" rx="176" ry="15"/>
+      <ellipse id="shadow" cx="200" cy="401" rx="104" ry="10"/>
+      <g id="chick"><g id="breath">
+        <path class="foot" d="M148 386c6-11 32-11 38 0c3 7-3 14-19 14s-22-7-19-14z"/>
+        <path class="foot" d="M214 386c6-11 32-11 38 0c3 7-3 14-19 14s-22-7-19-14z"/>
+        <g class="wing wl"><ellipse cx="82" cy="272" rx="30" ry="50" transform="rotate(26 82 272)"/></g>
+        <g class="wing wr"><ellipse cx="318" cy="272" rx="30" ry="50" transform="rotate(-26 318 272)"/></g>
+        <ellipse cx="200" cy="252" rx="132" ry="138" fill="url(#gBody)"/>
+        <ellipse class="belly" cx="200" cy="322" rx="86" ry="60"/>
+        <g transform="translate(200 120)"><g class="tuft">
+          <path d="M0 0C-9-14-8-32 0-40C8-32 9-14 0 0Z" transform="rotate(-32) scale(.78)"/>
+          <path d="M0 0C-9-14-8-32 0-40C8-32 9-14 0 0Z"/>
+          <path d="M0 0C-9-14-8-32 0-40C8-32 9-14 0 0Z" transform="rotate(32) scale(.78)"/>
+        </g></g>
+        <ellipse class="cheek" cx="120" cy="252" rx="20" ry="12"/>
+        <ellipse class="cheek" cx="280" cy="252" rx="20" ry="12"/>
+        <g class="eye"><ellipse cx="152" cy="208" rx="15" ry="20"/><circle class="shine" cx="157" cy="200" r="5.5"/><circle class="shine" cx="148" cy="217" r="2.4"/></g>
+        <g class="eye"><ellipse cx="248" cy="208" rx="15" ry="20"/><circle class="shine" cx="253" cy="200" r="5.5"/><circle class="shine" cx="244" cy="217" r="2.4"/></g>
+        <path class="heye" d="M136 213q16-18 32 0"/>
+        <path class="heye" d="M232 213q16-18 32 0"/>
+        <ellipse id="mouth" cx="200" cy="249" rx="13" ry="1"/>
+        <path id="beakLo" d="M186 246q14 4 28 0q-5 16-14 17q-9-1-14-17z"/>
+        <path class="beakUp" d="M180 238q20-12 40 0q-8 14-20 16q-12-2-20-16z"/>
+        <ellipse class="beakShine" cx="194" cy="236" rx="6" ry="2.6"/>
+      </g></g>
+      <g id="bottleWrap"><g transform="translate(258 250) rotate(-95)">
+        <path d="M-9-22C-9-46 9-46 9-22Z" fill="#f7b57c" stroke="#d9823f" stroke-width="2.5"/>
+        <rect x="-24" y="-25" width="48" height="16" rx="6" fill="#7fc8f8"/>
+        <rect x="-21" y="-10" width="42" height="84" rx="15" fill="#fff" stroke="#cfe6f4" stroke-width="3"/>
+        <rect x="-17" y="22" width="34" height="48" rx="11" fill="#fff4dc"/>
+        <path d="M-21 12h10M-21 30h10M-21 48h10" stroke="#bcdcef" stroke-width="3" stroke-linecap="round"/>
+      </g></g>
+      <g id="bubble" transform="translate(262 52)">
+        <path class="bub" d="M22 0H78A22 22 0 0 1 78 44H36L16 58L22 44A22 22 0 0 1 22 0Z"/>
+        <circle cx="30" cy="22" r="6"/><circle cx="50" cy="22" r="6"/><circle cx="70" cy="22" r="6"/>
+      </g>
+      <g id="fx"></g>
+    </svg>
+  </div>
+  <div class="acts">
+    <button class="act" id="act-milk" aria-label="Cho Bông uống sữa">🍼</button>
+    <button class="act" id="act-dance" aria-label="Bông nhảy múa">🎵</button>
+  </div>
 </section>
 
 <script>
@@ -162,13 +334,17 @@ body{
   let unlocked = false;
   function unlock(){
     const a = audio(); if(!a) return;
-    if(keepAlive.paused && screens.home.hidden){ keepAlive.play().catch(()=>{}); }
+    if(keepAlive.paused && screens.home.hidden && screens.talk.hidden){ keepAlive.play().catch(()=>{}); }
     if(unlocked && a.state==="running") return;
     try{ const b = a.createBuffer(1,1,22050), src = a.createBufferSource(); src.buffer=b; src.connect(a.destination); src.start(0); }catch(e){}
     if(a.state==="running") unlocked = true;
   }
   ["touchend","pointerup","click","keydown"].forEach(t=>document.addEventListener(t, unlock, {capture:true, passive:true}));
-  document.addEventListener("visibilitychange", ()=>{ if(!document.hidden && ac){ try{ ac.resume(); }catch(e){} } });
+  document.addEventListener("visibilitychange", ()=>{
+    if(document.hidden){ if(mic) closeMic(); return; }
+    if(ac){ try{ ac.resume(); }catch(e){} }
+    if(!screens.talk.hidden && listenOn) startTalk();
+  });
   // C-major pentatonic, index 0 = C4
   const STEPS=[0,2,4,7,9];
   function N(i){ const oct=Math.floor(i/5), s=STEPS[((i%5)+5)%5]; return 261.63*Math.pow(2,(oct*12+s)/12); }
@@ -335,14 +511,330 @@ body{
   cv.addEventListener("pointerdown", e => { e.preventDefault(); audio(); burst(e.clientX, e.clientY); });
   cv.addEventListener("pointermove", e => { if(e.buttons && Math.random()<.15) burst(e.clientX, e.clientY, true); });
 
+  // ---------- Talk: Bông the chick repeats what it hears ----------
+  // The microphone stays on this device: recordings live in memory for a few seconds and are never stored or sent.
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const pet = document.getElementById("pet"), fx = document.getElementById("fx");
+  const mouthEl = document.getElementById("mouth"), beakLo = document.getElementById("beakLo");
+  const micBtn = document.getElementById("mic"), micText = document.getElementById("mictext"), micDot = document.getElementById("micdot");
+  const inFrame = (()=>{ try{ return window.self !== window.top; }catch(e){ return true; } })();
+  const MIC_TEXT = {
+    wait:"Đang mở micro…", on:"Bé nói đi, Bông nhại lại", hear:"Bông đang nghe…", talk:"Bông đang nói…",
+    paused:"Đã tắt nghe · chạm để bật lại", denied:"Chưa cho phép micro · chạm để thử lại",
+    denied2:"Tải lại trang rồi bấm Cho phép micro", blocked:"Micro chỉ chạy khi mở bằng link GitHub",
+    none:"Không mở được micro trên máy này"
+  };
+  let micState = "wait", denials = 0;
+  function setMic(s){ micState = s; micBtn.dataset.s = s; micText.textContent = MIC_TEXT[s]; }
+  function setSession(t){ try{ if(navigator.audioSession) navigator.audioSession.type = t; }catch(e){} }
+
+  let mic = null, micPending = false, listenOn = true, acting = false, speaking = null;
+  let vad = "idle", muteUntil = 0, floor = .006, loudRun = 0, quietRun = 0, voiced = 0, level = 0, repeatT = 0;
+  let pre = [], rec = [], recRate = 48000;
+  const nowMs = () => performance.now();
+
+  // Timers that belong to this screen, cleared when leaving it.
+  let tq = [];
+  function later(fn, ms){ const id = setTimeout(()=>{ tq = tq.filter(x=>x!==id); fn(); }, ms); tq.push(id); return id; }
+
+  function onHear(on){ pet.classList.toggle("listen", on); if(micState==="on" || micState==="hear") setMic(on ? "hear" : "on"); }
+  function abortRec(){ if(vad==="rec"){ rec = []; vad = "idle"; onHear(false); } }
+  // Bông makes a sound: ignore the microphone meanwhile, so it never repeats itself.
+  function hush(ms){
+    muteUntil = Math.max(muteUntil, nowMs() + ms);
+    abortRec();
+    if(vad==="busy"){ clearTimeout(repeatT); vad = "idle"; }
+  }
+
+  async function startTalk(){
+    if(mic || micPending || screens.talk.hidden) return;
+    if(!listenOn){ setMic("paused"); return; }
+    const md = navigator.mediaDevices;
+    if(!md || !md.getUserMedia){ setMic(inFrame ? "blocked" : "none"); return; }
+    micPending = true; setMic("wait"); setSession("play-and-record");
+    let stream = null;
+    try{
+      stream = await md.getUserMedia({audio:{echoCancellation:false, noiseSuppression:true, autoGainControl:true}});
+    }catch(err){
+      micPending = false; setSession("playback");
+      const n = err && err.name;
+      if(n==="NotFoundError" || n==="OverconstrainedError" || n==="NotReadableError") setMic("none");
+      else if(inFrame) setMic("blocked");
+      else setMic(++denials > 1 ? "denied2" : "denied");
+      return;
+    }
+    micPending = false;
+    if(screens.talk.hidden || !listenOn || document.hidden){
+      stream.getTracks().forEach(t=>t.stop()); setSession("playback");
+      if(!listenOn) setMic("paused");
+      return;
+    }
+    try{
+      const a = audio(); let c = a, src;
+      try{ src = a.createMediaStreamSource(stream); }
+      catch(e){
+        const sr = (stream.getAudioTracks()[0].getSettings() || {}).sampleRate;
+        c = new (window.AudioContext||window.webkitAudioContext)(sr ? {sampleRate:sr} : undefined);
+        src = c.createMediaStreamSource(stream);
+      }
+      const proc = c.createScriptProcessor(2048, 1, 1), sink = c.createGain();
+      sink.gain.value = 0; src.connect(proc); proc.connect(sink); sink.connect(c.destination);
+      proc.onaudioprocess = onChunk; recRate = c.sampleRate;
+      mic = {stream, c, src, proc, sink};
+      try{ c.resume(); }catch(e){}
+      floor = .006; pre = []; loudRun = 0; vad = "idle";
+      muteUntil = Math.max(muteUntil, nowMs() + 500);
+      setMic("on");
+    }catch(e){
+      stream.getTracks().forEach(t=>t.stop()); setSession("playback"); setMic("none");
+    }
+  }
+  function closeMic(){
+    if(!mic) return;
+    try{ mic.proc.onaudioprocess = null; mic.src.disconnect(); mic.proc.disconnect(); mic.sink.disconnect(); }catch(e){}
+    try{ mic.stream.getTracks().forEach(t=>t.stop()); }catch(e){}
+    if(mic.c !== ac){ try{ mic.c.close(); }catch(e){} }
+    mic = null; level = 0; abortRec(); setSession("playback");
+  }
+
+  // Voice detection: a sound louder than the room starts a recording; 0.7 s of quiet ends it.
+  function onChunk(e){
+    const x = e.inputBuffer.getChannelData(0);
+    let s = 0; for(let i=0;i<x.length;i++) s += x[i]*x[i];
+    const rms = Math.sqrt(s/x.length);
+    level = rms;
+    if(vad==="busy" || vad==="speak" || !listenOn) return;
+    if(nowMs() < muteUntil){ loudRun = 0; return; }
+    const startT = Math.max(.012, floor*3.2), stopT = Math.max(.008, floor*2);
+    const chunk = new Float32Array(x);
+    if(vad==="idle"){
+      pre.push(chunk); if(pre.length > 8) pre.shift();
+      if(rms > startT){
+        if(++loudRun >= 2){ vad = "rec"; rec = pre; pre = []; voiced = loudRun*x.length; quietRun = 0; loudRun = 0; onHear(true); }
+      } else {
+        loudRun = 0;
+        floor += (Math.min(rms, floor*3) - floor) * .04;
+        floor = Math.min(.05, Math.max(.002, floor));
+      }
+    } else if(vad==="rec"){
+      rec.push(chunk);
+      if(rms > stopT){ quietRun = 0; voiced += x.length; } else quietRun += x.length;
+      if(quietRun > recRate*.7 || rec.length*x.length > recRate*6) finishRec();
+    }
+  }
+  function finishRec(){
+    const chunks = rec, quiet = quietRun; rec = []; onHear(false);
+    if(voiced < recRate*.3){ vad = "idle"; return; }
+    vad = "busy";
+    let n = 0; chunks.forEach(c=>{ n += c.length; });
+    const keep = Math.max(1, n - Math.max(0, quiet - Math.floor(recRate*.12)));
+    const d = new Float32Array(keep); let o = 0;
+    for(const c of chunks){ if(o >= keep) break; d.set(c.subarray(0, Math.min(c.length, keep-o)), o); o += c.length; }
+    let peak = 0; for(let i=0;i<keep;i++){ const v = Math.abs(d[i]); if(v > peak) peak = v; }
+    const g = Math.min(6, .85/Math.max(peak, 1e-4)), f = Math.max(1, Math.min(Math.floor(recRate*.02), keep>>2));
+    for(let i=0;i<keep;i++){ let v = d[i]*g; if(i < f) v *= i/f; else if(i >= keep-f) v *= (keep-1-i)/f; d[i] = v; }
+    repeatT = setTimeout(()=>repeat(d), 220);
+  }
+
+  let talkAn = null, talkBus = null;
+  const tdata = new Uint8Array(512);
+  function repeat(d){
+    const a = audio();
+    if(!a || screens.talk.hidden){ vad = "idle"; return; }
+    if(!talkBus){
+      talkAn = a.createAnalyser(); talkAn.fftSize = 512;
+      const hp = a.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 160;
+      talkBus = a.createGain(); talkBus.gain.value = 1;
+      talkBus.connect(hp); hp.connect(talkAn); talkAn.connect(master._comp);
+    }
+    const buf = a.createBuffer(1, d.length, recRate);
+    buf.getChannelData(0).set(d);
+    const s = a.createBufferSource(); s.buffer = buf;
+    s.playbackRate.value = 1.55;            // the funny high voice
+    s.connect(talkBus);
+    vad = "speak"; speaking = s; pet.classList.add("talking");
+    if(micState==="on" || micState==="hear") setMic("talk");
+    s.onended = () => {
+      if(speaking===s) speaking = null;
+      pet.classList.remove("talking");
+      if(vad==="speak") vad = "idle";
+      muteUntil = Math.max(muteUntil, nowMs() + 450);
+      if(micState==="talk") setMic("on");
+    };
+    s.start();
+  }
+  function stopSpeaking(){
+    if(!speaking) return;
+    const s = speaking; speaking = null;
+    try{ s.onended = null; s.stop(); }catch(e){}
+    pet.classList.remove("talking");
+    if(vad==="speak") vad = "idle";
+    if(micState==="talk") setMic("on");
+  }
+
+  // Beak, eyes and hearts
+  let talkLoop = false, mouthOpen = 0, mouthTarget = 0;
+  function talkFrame(){
+    if(screens.talk.hidden){ talkLoop = false; return; }
+    requestAnimationFrame(talkFrame);
+    let open = mouthTarget;
+    if(speaking && talkAn){
+      talkAn.getByteTimeDomainData(tdata);
+      let s = 0; for(let i=0;i<tdata.length;i++){ const v = (tdata[i]-128)/128; s += v*v; }
+      open = Math.max(open, Math.min(1, Math.max(0, (Math.sqrt(s/tdata.length) - .02) * 6)));
+    }
+    mouthOpen += (open - mouthOpen) * .45;
+    const m = mouthOpen < .01 ? 0 : mouthOpen;
+    beakLo.setAttribute("transform", `translate(0 ${(m*15).toFixed(2)})`);
+    mouthEl.setAttribute("ry", (1 + m*10).toFixed(2));
+    mouthEl.setAttribute("cy", (249 + m*5).toFixed(2));
+    micDot.style.transform = `scale(${(1 + Math.min(1, level*14)*.7).toFixed(2)})`;
+  }
+  function beak(times, len=.09){ times.forEach(t=>{ later(()=>{ mouthTarget = 1; }, t*1000); later(()=>{ mouthTarget = 0; }, (t+len)*1000); }); }
+  const animT = {};
+  function petAnim(cls, ms){
+    pet.classList.remove(cls); void pet.getBoundingClientRect(); pet.classList.add(cls);
+    clearTimeout(animT[cls]); animT[cls] = later(()=>pet.classList.remove(cls), ms);
+  }
+  function el(tag, attrs, parent){ const n = document.createElementNS(SVGNS, tag); for(const k in attrs) n.setAttribute(k, attrs[k]); if(parent) parent.appendChild(n); return n; }
+  const HEARTS = ["#ff6f91","#ff8fa3","#ffb703"], NOTES = ["#5aa9e6","#a67cf0","#4cbf73","#ff8c42"];
+  function spawn(kind, x, y){
+    const g = el("g", {transform:`translate(${x.toFixed(1)} ${y.toFixed(1)})`}, fx);
+    const f = el("g", {class:"fly"}, g);
+    if(kind==="note"){
+      const c = NOTES[Math.floor(Math.random()*NOTES.length)];
+      el("ellipse", {cx:0, cy:0, rx:9, ry:7, transform:"rotate(-20)", fill:c}, f);
+      el("rect", {x:6, y:-34, width:4, height:34, rx:2, fill:c}, f);
+      el("path", {d:"M8-34q15 6 11 21q-3-8-11-10z", fill:c}, f);
+    } else {
+      el("path", {d:"M0 10C-20-5-12-24 0-13C12-24 20-5 0 10Z", fill:HEARTS[Math.floor(Math.random()*HEARTS.length)]}, f);
+    }
+    const dx = (Math.random()-.5)*90, rot = (Math.random()-.5)*50;
+    try{
+      f.animate([
+        {transform:"translate(0px,0px) scale(.3)", opacity:0},
+        {transform:`translate(${(dx*.25).toFixed(1)}px,-28px) scale(1.15)`, opacity:1, offset:.2},
+        {transform:`translate(${dx.toFixed(1)}px,-140px) scale(.95) rotate(${rot.toFixed(0)}deg)`, opacity:0}
+      ], {duration:1500, easing:"ease-out", fill:"forwards"});
+    }catch(e){}
+    setTimeout(()=>g.remove(), 1550);
+    while(fx.childNodes.length > 30) fx.firstChild.remove();
+  }
+
+  // Soft chick sounds
+  function chirp(f1, f2, dur=.12, vol=.12, start=0){
+    const a = audio(); if(!a) return;
+    const t = a.currentTime + start, o = a.createOscillator(), g = a.createGain();
+    o.type = "sine"; o.frequency.setValueAtTime(f1, t); o.frequency.exponentialRampToValueAtTime(f2, t+dur);
+    g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(vol, t+.015); g.gain.exponentialRampToValueAtTime(.0001, t+dur);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t+dur+.05);
+  }
+  function happyChirp(at=0){ chirp(1600,2400,.11,.12,at); chirp(1750,2650,.12,.12,at+.17); beak([at, at+.17]); }
+  function greet(){ hush(1000); petAnim("hop", 620); happyChirp(.05); later(()=>spawn("heart", 200, 110), 300); }
+  function touchHead(){
+    hush(800); petAnim("joy", 1300); petAnim("wiggle", 560); happyChirp();
+    for(let i=0;i<3;i++) later(()=>spawn("heart", 165 + Math.random()*70, 125), i*140);
+  }
+  function touchBody(){
+    hush(900); petAnim("joy", 1000); petAnim("wiggle", 560);
+    [0,1,2,3,4].forEach(k=>chirp(1500-k*90, 1950-k*90, .07, .1, k*.085));
+    beak([0,.085,.17,.255,.34], .05);
+    spawn("heart", 200, 205);
+  }
+  function touchFeet(){ hush(800); petAnim("hop", 620); chirp(260,640,.18,.16); chirp(640,420,.12,.08,.2); beak([.05], .2); }
+
+  function feed(){
+    if(acting) return; acting = true; stopSpeaking(); hush(4300);
+    pet.classList.add("feed");
+    later(()=>{
+      pet.classList.add("suck");
+      [0,.55,1.1,1.65].forEach(t=>{ chirp(420,170,.13,.2,t); beak([t], .18); });
+    }, 500);
+    later(()=>{ pet.classList.remove("suck", "feed"); }, 2900);
+    later(()=>{
+      petAnim("joy", 1500); petAnim("hop", 620); happyChirp();
+      for(let i=0;i<5;i++) later(()=>spawn("heart", 150 + Math.random()*100, 150), i*120);
+    }, 3150);
+    later(()=>{ acting = false; }, 3900);
+  }
+  const DANCE = [7,9,10,9, 7,9,7,5, 7,9,10,12, 10,9,7,7], BASS = [-5,-5,-3,-3,-2,-2,-5,-5];
+  function dance(){
+    if(acting) return; acting = true; stopSpeaking();
+    const beat = .24, len = DANCE.length*beat;
+    hush(len*1000 + 700);
+    pet.classList.add("dance", "flap");
+    DANCE.forEach((n,i)=>{ pluck(N(n), i*beat, .35, .17); if(i%2===0) pluck(N(BASS[i/2]), i*beat, .6, .12); });
+    for(let i=0;i<8;i++) later(()=>spawn("note", 80 + Math.random()*240, 140 + Math.random()*80), i*450);
+    later(()=>{ pet.classList.remove("dance", "flap"); petAnim("joy", 1200); happyChirp(); acting = false; }, len*1000 + 100);
+  }
+
+  let blinkT = 0, idleT = 0, idleSince = 0;
+  function blinkLoop(){
+    clearTimeout(blinkT);
+    blinkT = setTimeout(()=>{
+      if(screens.talk.hidden) return;
+      if(!pet.classList.contains("joy")){ pet.classList.add("blink"); setTimeout(()=>pet.classList.remove("blink"), 140); }
+      blinkLoop();
+    }, 2200 + Math.random()*3000);
+  }
+  function idleLoop(){
+    clearTimeout(idleT);
+    idleT = setTimeout(()=>{
+      if(screens.talk.hidden) return;
+      if(!acting && !speaking && vad==="idle" && nowMs() - idleSince > 7000) petAnim("flap", 650);
+      idleLoop();
+    }, 6000 + Math.random()*5000);
+  }
+
+  function svgPoint(e){
+    const m = pet.getScreenCTM(); if(!m) return {x:200, y:250};
+    const p = pet.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; return p.matrixTransform(m.inverse());
+  }
+  pet.addEventListener("pointerdown", e => {
+    e.preventDefault(); audio(); idleSince = nowMs();
+    const p = svgPoint(e), onChick = e.target.closest && e.target.closest("#chick");
+    if(!onChick || acting || speaking){
+      spawn("heart", p.x, p.y);
+      if(!acting && !speaking){ pluck(N(10 + Math.floor(Math.random()*4)), 0, .5, .12); hush(600); }
+      return;
+    }
+    if(p.y < 190) touchHead(); else if(p.y > 372) touchFeet(); else touchBody();
+  });
+  micBtn.addEventListener("pointerdown", e => e.stopPropagation());
+  micBtn.addEventListener("click", e => {
+    e.stopPropagation(); audio();
+    if(micState==="paused"){ listenOn = true; startTalk(); }
+    else if(micState==="denied" || micState==="denied2" || micState==="none"){ startTalk(); }
+    else if(micState!=="wait" && micState!=="blocked"){ listenOn = false; closeMic(); stopSpeaking(); setMic("paused"); }
+  });
+  document.getElementById("act-milk").addEventListener("click", e => { e.stopPropagation(); audio(); idleSince = nowMs(); feed(); });
+  document.getElementById("act-dance").addEventListener("click", e => { e.stopPropagation(); audio(); idleSince = nowMs(); dance(); });
+
+  function enterTalk(){
+    pet.setAttribute("class", ""); acting = false; mouthTarget = 0; idleSince = nowMs();
+    if(!talkLoop){ talkLoop = true; requestAnimationFrame(talkFrame); }
+    blinkLoop(); idleLoop();
+    later(greet, 300);
+    startTalk();
+  }
+  function leaveTalk(){
+    closeMic(); stopSpeaking(); clearTimeout(repeatT); vad = "idle";
+    clearTimeout(blinkT); clearTimeout(idleT); tq.forEach(clearTimeout); tq = [];
+    acting = false; mouthTarget = 0; pet.setAttribute("class", "");
+    while(fx.firstChild) fx.firstChild.remove();
+  }
+
   // ---------- Screens ----------
-  const screens = {home:document.getElementById("home"), animals:document.getElementById("animals"), pop:document.getElementById("pop")};
+  const screens = {home:document.getElementById("home"), animals:document.getElementById("animals"), pop:document.getElementById("pop"), talk:document.getElementById("talk")};
   let wake = null;
   function show(name){
+    const wasTalk = !screens.talk.hidden;
     Object.entries(screens).forEach(([k,el])=> el.hidden = k!==name);
     running = name==="pop";
-    try{ if(name==="home") keepAlive.pause(); else keepAlive.play().catch(()=>{}); }catch(e){}
+    try{ if(name==="home" || name==="talk") keepAlive.pause(); else keepAlive.play().catch(()=>{}); }catch(e){}
     if(running){ resize(); if(!looping){ looping = true; requestAnimationFrame(frame); } }
+    if(wasTalk && name!=="talk") leaveTalk();
+    if(name==="talk") enterTalk();
     if(name==="home"){
       try{ if(document.fullscreenElement) document.exitFullscreen().catch(()=>{}); }catch(e){}
       try{ wake && wake.release(); wake=null; }catch(e){}
@@ -354,6 +846,7 @@ body{
   const startJingle = () => [0,2,4].forEach((k,j)=>pluck(N(5+k),j*.1,.5,.16));
   document.getElementById("go-animals").addEventListener("click", ()=>{ audio(); nextSet(); renderGrid(); show("animals"); startJingle(); });
   document.getElementById("go-pop").addEventListener("click", ()=>{ audio(); parts=[]; blooms=[]; show("pop"); startJingle(); });
+  document.getElementById("go-talk").addEventListener("click", ()=>{ audio(); show("talk"); });
 
   // Back to the home screen
   document.querySelectorAll(".exit").forEach(btn=>{
@@ -367,3 +860,6 @@ body{
   document.addEventListener("touchmove", e=>{ if(screens.home.hidden) e.preventDefault(); }, {passive:false});
 })();
 </script>
+
+</body>
+</html>
